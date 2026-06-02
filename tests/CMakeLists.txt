@@ -7,21 +7,28 @@ if(MSVC)
 endif()
 
 # ==========================================
-# 1. 使用本地的 GoogleTest 框架
+# 1. 智能依赖查找 (Local Fallback to Fetch)
 # ==========================================
-#find_package(GTest REQUIRED)
+# 第一步：尝试在本地静默查找 GTest (不加 REQUIRED，找不到不报错)
+find_package(GTest QUIET)
 
-# ==========================================
-# 1. 在编译时自动拉取并编译 GoogleTest
-# ==========================================
-# 便于ci/cd 测试
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG        v1.14.0
-)
-FetchContent_MakeAvailable(googletest)
+if(GTest_FOUND)
+    message(STATUS "[TerminusUnorder] Found local GoogleTest. Using GTest::gtest_main.")
+    # 如果找到了，记录本地目标名称
+    set(MY_GTEST_TARGET GTest::gtest_main)
+else()
+    message(STATUS "[TerminusUnorder] Local GoogleTest not found. Fetching from GitHub...")
+    # 第二步：如果本地没有，则通过网络拉取
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.14.0
+    )
+    FetchContent_MakeAvailable(googletest)
+    # 记录 FetchContent 生成的目标名称
+    set(MY_GTEST_TARGET gtest_main)
+endif()
 
 # ==========================================
 # 2. 自动扫描并编译测试源码 (替换了原来的写法)
@@ -38,14 +45,8 @@ add_executable(terminus_test ${TEST_SOURCES})
 # 链接我们的主库和 gtest
 target_link_libraries(terminus_test PRIVATE
         terminus_unorder
-        GTest::gtest_main
+        ${MY_GTEST_TARGET}
 )
-
-## 【新增】：配置测试模块专属的头文件搜索路径
-## 假设你的 include 目录在项目根目录下，使用 ${PROJECT_SOURCE_DIR}/include 定位
-#target_include_directories(terminus_test PRIVATE
-#        ${PROJECT_SOURCE_DIR}/include
-#)
 
 # 开启 TSan 数据竞争检测 (推荐在 Linux/macOS 下开启)
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
