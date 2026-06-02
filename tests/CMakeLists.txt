@@ -1,7 +1,19 @@
 # ==========================================
 # 1. 使用本地的 GoogleTest 框架
 # ==========================================
-find_package(GTest REQUIRED)
+#find_package(GTest REQUIRED)
+
+# ==========================================
+# 1. 在编译时自动拉取并编译 GoogleTest
+# ==========================================
+# 便于ci/cd 测试
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0
+)
+FetchContent_MakeAvailable(googletest)
 
 # ==========================================
 # 2. 自动扫描并编译测试源码 (替换了原来的写法)
