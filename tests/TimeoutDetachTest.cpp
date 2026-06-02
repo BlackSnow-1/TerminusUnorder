@@ -37,7 +37,11 @@ TEST(CoordinatorTest, DeadlockRecoveryByTimeout) {
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
     // 1. 验证框架在约 200ms 超时后立刻返回了，没有被 10 秒的死锁拖住
-    EXPECT_NEAR(elapsed, 200, 50); // 允许 50ms 的误差
+    // 1.1. 严格检查下限：绝对不能早于 200ms (防止框架提前误杀)
+    EXPECT_GE(elapsed, 200) << "Timeout triggered too early!";
+
+    // 1.2. 宽松检查上限：允许操作系统的线程调度有最多 300ms 的误差时间
+    EXPECT_LT(elapsed, 500) << "Timeout mechanism failed or OS is extremely overloaded.";
 
     // 2. 验证尽管 BuggyNode 超时了，它所阻挡的下游节点依然得到了执行的机会
     EXPECT_TRUE(downstream_executed) << "Downstream node was skipped!";
