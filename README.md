@@ -106,7 +106,7 @@ int main() {
 include(FetchContent)
 FetchContent_Declare(
     terminus_unorder
-    GIT_REPOSITORY [https://github.com/your-username/TerminusUnorder.git](https://github.com/your-username/TerminusUnorder.git)
+    GIT_REPOSITORY https://github.com/BlackSnow-1/TerminusUnorder.git
     GIT_TAG main
 )
 FetchContent_MakeAvailable(terminus_unorder)
