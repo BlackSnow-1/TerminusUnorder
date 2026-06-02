@@ -121,7 +121,7 @@ target_link_libraries(my_app PRIVATE terminus_unorder)
 项目内置了丰富的 Examples 和基于 Google Test 的并发单元测试（支持 TSan 数据竞争检测）。
 
 ```bash
-git clone [https://github.com/your-username/TerminusUnorder.git](https://github.com/your-username/TerminusUnorder.git)
+git clone https://github.com/BlackSnow-1/TerminusUnorder.git
 cd TerminusUnorder
 
 # 配置构建 (启用测试与示例)
