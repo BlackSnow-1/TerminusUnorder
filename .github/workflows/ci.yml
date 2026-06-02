@@ -1,0 +1,63 @@
+name: TerminusUnorder CI
+
+# 触发条件：当主分支有代码推送，或者有人提 PR 时触发
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.compiler }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    # 策略：构建矩阵 (Build Matrix)
+    strategy:
+      fail-fast: false # 即使其中一个编译器失败了，也让其他的继续跑完
+      matrix:
+        include:
+          # 1. Linux + GCC (Ubuntu 默认)
+          - os: ubuntu-latest
+            compiler: gcc
+            cxx_env: g++
+
+          # 2. Linux + Clang
+          - os: ubuntu-latest
+            compiler: clang
+            cxx_env: clang++
+
+          # 3. Windows + MSVC (Windows 默认)
+          - os: windows-latest
+            compiler: msvc
+            cxx_env: cl
+
+          # 4. macOS + Apple Clang (顺便支持一下苹果生态)
+          - os: macos-latest
+            compiler: apple-clang
+            cxx_env: clang++
+
+    steps:
+      # 第一步：把你的代码拉取到 GitHub 的服务器上
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 第二步：配置 CMake，并强制指定 C++ 编译器
+      # -DTERMINUS_BUILD_TESTS=ON 确保开启你的测试模块
+      - name: Configure CMake
+        env:
+          CXX: ${{ matrix.cxx_env }} # 这一步最关键，告诉 CMake 用哪个编译器
+        run: >
+          cmake -B build -S . 
+          -DCMAKE_BUILD_TYPE=Release 
+          -DTERMINUS_BUILD_TESTS=ON 
+          -DTERMINUS_BUILD_EXAMPLES=ON
+
+      # 第三步：执行编译
+      - name: Build
+        run: cmake --build build --config Release
+
+      # 第四步：运行你的 Google Test 单元测试
+      - name: Run CTest
+        working-directory: build
+        run: ctest -C Release --output-on-failure
