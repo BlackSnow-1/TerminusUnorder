@@ -1,9 +1,3 @@
-这是一个为你量身定制的 `TerminusUnorder` 项目的开源级 `README.md` 模板。
-
-它不仅包含了高质量的排版、徽章（Badges），还直接嵌入了我们在架构设计阶段生成的 Mermaid 拓扑图，并详细说明了你刚刚完成的 CMake 构建与测试流程。你可以直接将下面的文本复制并保存为项目根目录的 `README.md`。
-
----
-
 
 # 🛑 TerminusUnorder
 
