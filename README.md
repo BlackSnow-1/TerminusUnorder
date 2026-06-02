@@ -5,6 +5,7 @@
 ![Header Only](https://img.shields.io/badge/Header--Only-Yes-success.svg)
 ![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![CI Status](https://github.com/BlackSnow-1/TerminusUnorder/actions/workflows/ci.yml/badge.svg)
 
 **TerminusUnorder** 是一个基于现代 C++ (C++17) 的轻量级、**Header-only** 的优雅退出协调器 (Graceful Shutdown Coordinator) 框架。
 
