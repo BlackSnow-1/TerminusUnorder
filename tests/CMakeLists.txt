@@ -1,4 +1,12 @@
 # ==========================================
+# 0. 修复 Windows MSVC 运行时库冲突
+# ==========================================
+# 强制 GoogleTest 使用动态 C++ 运行时库 (/MD)，与 CMake 默认行为保持一致
+if(MSVC)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+endif()
+
+# ==========================================
 # 1. 使用本地的 GoogleTest 框架
 # ==========================================
 #find_package(GTest REQUIRED)
