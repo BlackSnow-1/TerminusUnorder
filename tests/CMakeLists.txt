@@ -50,7 +50,8 @@ target_link_libraries(terminus_test PRIVATE
 
 # 开启 TSan 数据竞争检测 (推荐在 Linux/macOS 下开启)
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    target_compile_options(terminus_test PRIVATE -fsanitize=thread -g)
+    # 增加了 -fno-omit-frame-pointer
+    target_compile_options(terminus_test PRIVATE -fsanitize=thread -g -fno-omit-frame-pointer)
     target_link_options(terminus_test PRIVATE -fsanitize=thread)
 endif()
 
