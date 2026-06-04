@@ -51,50 +51,7 @@ graph TD
     class C,D,E unorder;
 ```
 
-## 🚀 快速开始
 
-### 1. 引入框架
-
-将 `include/terminus_unorder` 放入你的工程中，或通过 CMake FetchContent 引入。
-
-```cpp
-#include "terminus_unorder/coordinator.hpp"
-#include <iostream>
-#include <chrono>
-
-using namespace terminus;
-
-int main() {
-    UnorderCoordinator engine;
-
-    // 1. 使用 Lambda 快速注册节点
-    auto dbNode = std::make_shared<FunctionalNode>(
-        "Database", 
-        []() { std::cout << "Closing DB...\n"; return true; }
-    );
-    
-    // 设置一个带有超时控制的恶意死锁节点
-    auto logicNode = std::make_shared<FunctionalNode>(
-        "Logic", 
-        []() { 
-            std::this_thread::sleep_for(std::chrono::seconds(10)); 
-            return true; 
-        },
-        std::chrono::milliseconds(500) // 500ms 超时强杀
-    );
-
-    // 2. 构建依赖 (Logic 必须在 Database 之前退出)
-    engine.Register(dbNode, {});
-    engine.Register(logicNode, {"Database"});
-
-    // 3. 执行优雅退出
-    std::cout << "Triggering Shutdown...\n";
-    engine.ShutdownAll();
-
-    return 0;
-}
-
-```
 
 ## 🛠️ 构建与安装
 
@@ -141,6 +98,54 @@ cd build && ctest -V
 # 安装头文件到系统目录 (/usr/local/include)
 sudo cmake --build build --target install
 ```
+
+
+## 🚀 快速开始
+
+### 1. 引入框架
+
+将 `include/terminus_unorder` 放入你的工程中，或通过 CMake FetchContent 引入。
+
+```cpp
+#include "terminus_unorder/coordinator.hpp"
+#include <iostream>
+#include <chrono>
+
+using namespace terminus;
+
+int main() {
+    UnorderCoordinator engine;
+
+    // 1. 使用 Lambda 快速注册节点
+    auto dbNode = std::make_shared<FunctionalNode>(
+        "Database", 
+        []() { std::cout << "Closing DB...\n"; return true; }
+    );
+    
+    // 设置一个带有超时控制的恶意死锁节点
+    auto logicNode = std::make_shared<FunctionalNode>(
+        "Logic", 
+        []() { 
+            std::this_thread::sleep_for(std::chrono::seconds(10)); 
+            return true; 
+        },
+        std::chrono::milliseconds(500) // 500ms 超时强杀
+    );
+
+    // 2. 构建依赖 (Logic 必须在 Database 之前退出)
+    engine.Register(dbNode, {});
+    engine.Register(logicNode, {"Database"});
+
+    // 3. 执行优雅退出
+    std::cout << "Triggering Shutdown...\n";
+    engine.ShutdownAll();
+
+    return 0;
+}
+
+```
+
+
 
 ## 🤝 贡献指南
 
