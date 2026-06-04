@@ -89,13 +89,13 @@ cmake --build build
 
 # 运行单元测试
 cd build && ctest -V
-
 ```
 
-### 全局安装与卸载 (Linux/macOS)
+### 全局安装 (Linux/macOS)
 
 ```bash
 # 安装头文件到系统目录 (/usr/local/include)
+# 此命令需要在项目根目录下运行
 sudo cmake --build build --target install
 ```
 
